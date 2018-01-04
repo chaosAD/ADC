@@ -16,7 +16,7 @@ The following are the steps to scan a number of STM32's ADC channels (polling te
 
 The following is a C program example (though incomplete code). It scans ADC1 channels 5 and 13 and print the raw result.
 
-```
+```C
   int channelSeq[] = {5, 13};
 
   // Un-reset ADC1 and clock it.
