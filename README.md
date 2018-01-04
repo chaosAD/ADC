@@ -1,7 +1,9 @@
+# Scan Multiple ADC Channels
+
 The following are the steps to scan a number of STM32's ADC channels (polling technique).
 
 1. Configure the ADC channel pins as analog.
-2. Configure ADC to scan mode (CR1:SCAN = 1), data being right-aligned (for ease of reading), generate EOC (end-of-conversion) at the end of each channel conversion (CR2:EOCS = 1), and turn on ADC (CR1:ADON).
+2. Configure ADC to scan mode (CR1:SCAN = 1), data being right-aligned (for ease of reading), generate EOC (end-of-conversion) at the end of each channel conversion (CR2:EOCS = 1), and turn on ADC (CR2:ADON).
 3. Register the channels to be scanned in the Sequence Register(s).
 4. Clear all the flags (if some error flags are asserted, the conversion will not start)
 5. Start the conversion (CR2:SWSTART)
@@ -10,12 +12,14 @@ The following are the steps to scan a number of STM32's ADC channels (polling te
 8. Read the converted data (DR)
 9. Repeat step 6, if the is anymore channel left to scan. Otherwise stop.
 
+**Important note:** to permit successful polling, EOCS must be configured to _generate EOC on each channel conversion_. Otherwise, an overrun error will be triggered. This happens because there is only DR register to read the converted values of all channels. Since each channel is converted one-by-one, we need to know when each conversion has ended.  
+
 The following is a C program example (though incomplete code). It scans ADC1 channels 5 and 13 and print the raw result.
 
 ```
   int channelSeq[] = {5, 13};
 
-  // Un-reset ADC1/2/3 and clock it.
+  // Un-reset ADC1 and clock it.
   enableAdc(ADC1_DEV);
 
   // Set the sampling time for channels 5 and 13
